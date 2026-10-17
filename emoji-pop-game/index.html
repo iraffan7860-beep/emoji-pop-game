@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ff3ca6" />
+  <meta name="description" content="Guess the Food by Emojis! A fun food guessing game." />
+  <title>Guess the Food! | Emoji Game</title>
+
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+    :root {
+      --pink: #ff3ca6;
+      --purple: #9b5cff;
+      --yellow: #ffe66d;
+      --cream: #fff9ed;
+      --ink: #21172e;
+      --white: #ffffff;
+      --green: #17865c;
+      --red: #d83259;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background:
+        radial-gradient(circle at 10% 10%, #ffd2eb 0, transparent 30%),
+        radial-gradient(circle at 90% 90%, #dcd0ff 0, transparent 32%),
+        var(--cream);
+      color: var(--ink);
+      font-family: 'Nunito', sans-serif;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--purple);
+      outline-offset: 4px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 10px;
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
+    }
+
+    .brand-tag {
+      background: var(--yellow);
+      padding: 7px 12px;
+      border: 2px solid var(--ink);
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 900;
+      transform: rotate(2deg);
+    }
+
+    .card {
+      background: var(--white);
+      border: 3px solid var(--ink);
+      border-radius: 28px;
+      padding: 26px 21px;
+      box-shadow: 7px 7px 0 var(--ink);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      background: #f0e6ff;
+      color: #6736bb;
+      padding: 7px 12px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(43px, 12vw, 60px);
+      line-height: 0.98;
+      letter-spacing: -3px;
+      margin: 18px 0 12px;
+      font-weight: 900;
+    }
+
+    h1 span {
+      color: var(--pink);
+      text-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .subtitle {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #62586e;
+    }
+
+    .hero-emoji {
+      text-align: center;
+      font-size: 65px;
+      padding: 23px 0;
+      margin: 18px 0;
+      border: 2px dashed #d9c4ff;
+      border-radius: 22px;
+      background: #fbf7ff;
+      letter-spacing: 4px;
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      padding: 15px;
+      background: var(--pink);
+      color: white;
+      font-weight: 900;
+      font-size: 16px;
+      box-shadow: 0 5px 0 var(--ink);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .primary-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 var(--ink);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px;
+      border: 2px solid var(--ink);
+      border-radius: 15px;
+      background: var(--yellow);
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .tiny-note {
+      text-align: center;
+      font-size: 12px;
+      color: #776b83;
+      margin-top: 20px;
+      font-weight: 800;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .game-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .counter, .score-pill {
+      font-size: 12px;
+      font-weight: 900;
+      padding: 8px 11px;
+      border-radius: 50px;
+      background: #f0e6ff;
+    }
+
+    .score-pill {
+      background: var(--yellow);
+    }
+
+    .progress-track {
+      height: 10px;
+      border: 2px solid var(--ink);
+      background: #eee8f3;
+      border-radius: 50px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--pink);
+      transition: width 0.25s ease;
+    }
+
+    .question-label {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #786a88;
+      text-align: center;
+    }
+
+    .puzzle {
+      background: #f5edff;
+      border: 2px solid var(--ink);
+      border-radius: 22px;
+      padding: 23px 8px;
+      text-align: center;
+      margin: 13px 0 20px;
+    }
+
+    .puzzle-emoji {
+      font-size: clamp(55px, 15vw, 76px);
+      letter-spacing: 5px;
+      line-height: 1.4;
+    }
+
+    .question-text {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 15px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .answer-btn {
+      min-height: 58px;
+      padding: 12px 8px;
+      border: 2px solid var(--ink);
+      border-radius: 15px;
+      background: white;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 3px 0 var(--ink);
+      overflow-wrap: anywhere;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .answer-btn:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--ink);
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+    }
+
+    .answer-btn.correct {
+      background: #c8f7df;
+      border-color: var(--green);
+    }
+
+    .answer-btn.wrong {
+      background: #ffe0e8;
+      border-color: var(--red);
+    }
+
+    .feedback {
+      margin-top: 17px;
+      border-radius: 14px;
+      padding: 13px;
+      background: #f8f4ff;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .feedback.good {
+      background: #e0faeb;
+      color: #126844;
+    }
+
+    .feedback.bad {
+      background: #fff0f3;
+      color: #a51d40;
+    }
+
+    .next-btn {
+      margin-top: 16px;
+    }
+
+    .result-emoji {
+      text-align: center;
+      font-size: 76px;
+      margin: 12px 0;
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .result-copy {
+      text-align: center;
+      color: #62586e;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .final-score {
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      padding: 19px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .final-score strong {
+      display: block;
+      font-size: 48px;
+      line-height: 1.2;
+    }
+
+    .final-score span {
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: #786b83;
+      margin-top: 23px;
+      letter-spacing: 0.8px;
+    }
+
+    @media (max-width: 360px) {
+      .card {
+        padding: 21px 15px;
+      }
+
+      .answer-btn {
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="brand">
+      <div class="brand-name">✦ FOODIE MAGIC</div>
+      <div class="brand-tag">YUMMY TIME!</div>
+    </header>
+
+    <!-- WELCOME SCREEN -->
+    <section class="card" id="welcome">
+      <span class="eyebrow">THE FOOD CHALLENGE</span>
+      <h1>GUESS THE<br /><span>FOOD!</span></h1>
+
+      <p class="subtitle">
+        Look at the emojis and guess the food! Can you get all 10 correct?
+      </p>
+
+      <div class="hero-emoji" aria-hidden="true">🍕 🍔 🍟</div>
+
+      <button class="primary-btn" id="startBtn">
+        LET'S PLAY! →
+      </button>
+
+      <p class="tiny-note">10 QUESTIONS · ONE YUMMY CHALLENGE</p>
+    </section>
+
+    <!-- GAME SCREEN -->
+    <section class="card hidden" id="game" aria-label="Food emoji quiz">
+      <div class="game-top">
+        <span class="counter" id="counter">QUESTION 1/10</span>
+        <span class="score-pill" id="scorePill">⭐ SCORE: 0</span>
+      </div>
+
+      <div
+        class="progress-track"
+        role="progressbar"
+        aria-label="Quiz progress"
+        aria-valuemin="0"
+        aria-valuemax="10"
+        aria-valuenow="0"
+        id="progressTrack"
+      >
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <p class="question-label">Decode the food emojis</p>
+
+      <div class="puzzle">
+        <div class="puzzle-emoji" id="puzzleEmoji">🍕 🧀</div>
+      </div>
+
+      <p class="question-text" id="questionText">
+        What food is this?
+      </p>
+
+      <div class="answers" id="answers"></div>
+
+      <div
+        class="feedback hidden"
+        id="feedback"
+        role="status"
+        aria-live="polite"
+      ></div>
+
+      <button class="primary-btn next-btn hidden" id="nextBtn">
+        NEXT QUESTION →
+      </button>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section class="card hidden" id="result">
+      <span class="eyebrow">CHALLENGE COMPLETE</span>
+
+      <div class="result-emoji" id="resultEmoji">🏆</div>
+
+      <h2 class="result-title" id="resultTitle">YOU DID IT!</h2>
+
+      <p class="result-copy" id="resultCopy">
+        You completed the food emoji challenge!
+      </p>
+
+      <div class="final-score">
+        <strong id="finalScore">0/10</strong>
+        <span>YOUR FINAL SCORE</span>
+      </div>
+
+      <button class="primary-btn" id="shareBtn">
+        SHARE MY SCORE ↗
+      </button>
+
+      <button class="secondary-btn" id="restartBtn">
+        PLAY AGAIN ↻
+      </button>
+    </section>
+
+    <footer>MADE WITH ♡ FOR FOOD LOVERS</footer>
+  </main>
+
+  <script>
+    // STEP 1: ALL FOOD QUESTIONS
+    const questions = [
+      {
+        emoji: "🍞 🥚",
+        prompt: "Guess the food!",
+        options: ["Toast", "Egg Sandwich", "Pizza", "Pancake"],
+        answer: "Egg Sandwich",
+        fact: "Egg sandwiches make breakfast extra tasty!"
+      },
+      {
+        emoji: "🍰 🍫",
+        prompt: "Guess the dessert!",
+        options: ["Chocolate Cake", "Brownie", "Chocolate Ice Cream", "Donut"],
+        answer: "Chocolate Cake",
+        fact: "Chocolate cake makes every celebration sweeter!"
+      },
+      {
+        emoji: "🧄 🍞",
+        prompt: "Guess the food!",
+        options: ["Pizza Bread", "Garlic Bread", "Sandwich", "Cheese Toast"],
+        answer: "Garlic Bread",
+        fact: "Garlic bread is famous for its buttery garlic flavor!"
+      },
+      {
+        emoji: "🍓 🥛",
+        prompt: "Guess the drink!",
+        options: ["Strawberry Milk", "Milkshake", "Strawberry Ice Cream", "Strawberry Juice"],
+        answer: "Strawberry Milk",
+        fact: "Strawberries and milk make a delicious pink drink!"
+      },
+      {
+        emoji: "🍔 🍅 🧀",
+        prompt: "Guess the fast food!",
+        options: ["Cheeseburger", "Pizza", "Grilled Cheese", "Tomato Sandwich"],
+        answer: "Cheeseburger",
+        fact: "A cheeseburger combines a burger with a tasty slice of cheese!"
+      }
+    ];
+
+
+    // STEP 2: GET HTML ELEMENTS
+    const welcome = document.getElementById("welcome");
+    const game = document.getElementById("game");
+    const result = document.getElementById("result");
+
+    const startBtn = document.getElementById("startBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const shareBtn = document.getElementById("shareBtn");
+
+    const counter = document.getElementById("counter");
+    const scorePill = document.getElementById("scorePill");
+    const progressFill = document.getElementById("progressFill");
+    const progressTrack = document.getElementById("progressTrack");
+    const puzzleEmoji = document.getElementById("puzzleEmoji");
+    const questionText = document.getElementById("questionText");
+    const answers = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+
+    // STEP 3: GAME VARIABLES
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    // STEP 4: CHANGE SCREENS
+    function showScreen(screen) {
+      welcome.classList.add("hidden");
+      game.classList.add("hidden");
+      result.classList.add("hidden");
+
+      screen.classList.remove("hidden");
+    }
+
+    // STEP 5: START OR RESTART GAME
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      answered = false;
+
+      showScreen(game);
+      renderQuestion();
+    }
+
+    // STEP 6: DISPLAY QUESTION AND OPTIONS
+    function renderQuestion() {
+      answered = false;
+
+      const question = questions[currentQuestion];
+
+      counter.textContent =
+        `QUESTION ${currentQuestion + 1}/${questions.length}`;
+
+      scorePill.textContent = `⭐ SCORE: ${score}`;
+
+      progressFill.style.width =
+        `${(currentQuestion / questions.length) * 100}%`;
+
+      progressTrack.setAttribute("aria-valuenow", currentQuestion);
+
+      puzzleEmoji.textContent = question.emoji;
+      questionText.textContent = question.prompt;
+
+      feedback.className = "feedback hidden";
+      feedback.textContent = "";
+
+      nextBtn.classList.add("hidden");
+
+      nextBtn.textContent =
+        currentQuestion === questions.length - 1
+          ? "SEE MY SCORE →"
+          : "NEXT QUESTION →";
+
+      answers.replaceChildren();
+
+      question.options.forEach((option) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "answer-btn";
+        button.textContent = option;
+
+        button.addEventListener("click", () => {
+          selectAnswer(button, option);
+        });
+
+        answers.appendChild(button);
+      });
+    }
+
+    // STEP 7: CHECK THE ANSWER
+    function selectAnswer(selectedButton, option) {
+      if (answered) return;
+
+      answered = true;
+
+      const question = questions[currentQuestion];
+      const isCorrect = option === question.answer;
+
+      const allButtons = answers.querySelectorAll("button");
+
+      if (isCorrect) {
+        score++;
+      }
+
+      allButtons.forEach((button) => {
+        button.disabled = true;
+
+        if (button.textContent === question.answer) {
+          button.classList.add("correct");
+        }
+      });
+
+      if (!isCorrect) {
+        selectedButton.classList.add("wrong");
+      }
+
+      feedback.classList.remove("hidden");
+      feedback.classList.add(isCorrect ? "good" : "bad");
+
+      feedback.textContent = isCorrect
+        ? `🎉 Correct! ${question.fact}`
+        : `💗 Not quite! The answer is ${question.answer}. ${question.fact}`;
+
+      scorePill.textContent = `⭐ SCORE: ${score}`;
+
+      progressFill.style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+      progressTrack.setAttribute(
+        "aria-valuenow",
+        currentQuestion + 1
+      );
+
+      nextBtn.classList.remove("hidden");
+    }
+
+    // STEP 8: MOVE TO NEXT QUESTION
+    function nextQuestion() {
+      if (!answered) return;
+
+      currentQuestion++;
+
+      if (currentQuestion < questions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    // STEP 9: SHOW FINAL SCORE
+    function showResults() {
+      showScreen(result);
+
+      document.getElementById("finalScore").textContent =
+        `${score}/${questions.length}`;
+
+      const percentage = (score / questions.length) * 100;
+
+      let emoji = "💗";
+      let title = "NICE TRY!";
+      let message = "Keep playing and become a food emoji expert!";
+
+      if (percentage === 100) {
+        emoji = "👑";
+        title = "FOOD GENIUS!";
+        message = "Perfect score! You guessed every food correctly!";
+      } else if (percentage >= 60) {
+        emoji = "🔥";
+        title = "YUMMY JOB!";
+        message = "Amazing! You know your food emojis!";
+      } else if (percentage >= 40) {
+        emoji = "✨";
+        title = "GOOD JOB!";
+        message = "Nice try! Play again and beat your score!";
+      }
+
+      document.getElementById("resultEmoji").textContent = emoji;
+      document.getElementById("resultTitle").textContent = title;
+      document.getElementById("resultCopy").textContent = message;
+
+      shareBtn.textContent = "SHARE MY SCORE ↗";
+    }
+
+    // STEP 10: SHARE YOUR SCORE
+    async function shareScore() {
+      const shareText =
+        `I scored ${score}/${questions.length} on Guess the Food by Emojis! 🍕🍔 Can you beat my score?`;
+
+      const shareData = {
+        title: "Guess the Food by Emojis!",
+        text: shareText,
+        url: window.location.href
+      };
+
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(
+            `${shareText}\n${window.location.href}`
+          );
+
+          shareBtn.textContent = "COPIED! ✓";
+        } else {
+          window.prompt(
+            "Copy your score and game link:",
+            `${shareText}\n${window.location.href}`
+          );
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          window.prompt(
+            "Copy your score and game link:",
+            `${shareText}\n${window.location.href}`
+          );
+        }
+      }
+    }
+
+    // STEP 11: BUTTON EVENTS
+    startBtn.addEventListener("click", startGame);
+    nextBtn.addEventListener("click", nextQuestion);
+    restartBtn.addEventListener("click", startGame);
+    shareBtn.addEventListener("click", shareScore);
+  </script>
+</body>
+</html>
